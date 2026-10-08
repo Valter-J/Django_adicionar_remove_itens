@@ -1,0 +1,38 @@
+{% extends "compras/base.html" %}
+
+{% block content %}
+    <h1>Lista de compras</h1>
+
+    <form method="post" class="form-novo">
+        {% csrf_token %}
+        {{ form.nome }}
+        {{ form.quantidade }}
+        <button type="submit">Adicionar</button>
+    </form>
+    {{ form.nome.errors }}
+    {{ form.quantidade.errors }}
+
+    <p class="resumo">Faltam comprar: <strong>{{ pendentes }}</strong></p>
+
+    <ul class="lista">
+        {% for item in itens %}
+            <li class="{% if item.comprado %}comprado{% endif %}">
+                <form method="post" action="{% url 'alternar' item.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-icone check" title="Marcar como comprado">
+                        {% if item.comprado %}&#10003;{% endif %}
+                    </button>
+                </form>
+
+                <span class="nome">{{ item.quantidade }}x {{ item.nome }}</span>
+
+                <form method="post" action="{% url 'excluir' item.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-icone excluir" title="Excluir">&#10005;</button>
+                </form>
+            </li>
+        {% empty %}
+            <li class="vazia">Sua lista está vazia.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
