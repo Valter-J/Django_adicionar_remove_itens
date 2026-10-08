@@ -1,0 +1,31 @@
+{% extends "compras/base.html" %}
+
+{% block title %}Categorias{% endblock %}
+
+{% block content %}
+    <a href="{% url 'lista' %}" class="link-nav">&larr; Voltar à lista</a>
+    <h1>Categorias</h1>
+
+    <form method="post" class="form-novo">
+        {% csrf_token %}
+        {{ form.nome }}
+        <button type="submit">Adicionar</button>
+    </form>
+    {{ form.nome.errors }}
+
+    <ul class="lista">
+        {% for categoria in categorias %}
+            <li>
+                <span class="nome">{{ categoria.nome }}</span>
+                <span class="total">{{ categoria.total_itens }} item(ns)</span>
+
+                <form method="post" action="{% url 'excluir_categoria' categoria.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-icone excluir" title="Excluir">&#10005;</button>
+                </form>
+            </li>
+        {% empty %}
+            <li class="vazia">Nenhuma categoria cadastrada.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

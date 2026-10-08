@@ -2,13 +2,16 @@
 
 {% block content %}
     <h1>Lista de compras</h1>
+     <a href="{% url 'categorias' %}" class="link-nav">Gerenciar categorias</a>
 
     <form method="post" class="form-novo">
         {% csrf_token %}
+        {{ form.categoria }}
         {{ form.nome }}
         {{ form.quantidade }}
         <button type="submit">Adicionar</button>
     </form>
+    {{ form.categoria.errors }}
     {{ form.nome.errors }}
     {{ form.quantidade.errors }}
 
@@ -24,7 +27,14 @@
                     </button>
                 </form>
 
-                <span class="nome">{{ item.quantidade }}x {{ item.nome }}</span>
+                <span class="nome">
+                    {% if item.categoria %}
+                    <span class="tag">{{ item.categoria.nome }}</span>
+                    {% endif %}
+                    {{ item.quantidade }}x {{ item.nome }}
+                </span>
+
+                
 
                 <form method="post" action="{% url 'excluir' item.pk %}">
                     {% csrf_token %}
@@ -35,4 +45,10 @@
             <li class="vazia">Sua lista está vazia.</li>
         {% endfor %}
     </ul>
+    {% if tem_comprados %}
+        <form method="post" action="{% url 'limpar_comprados' %}" class="form-limpar">
+            {% csrf_token %}
+            <button type="submit">Limpar comprados</button>
+        </form>
+    {% endif %}
 {% endblock %}

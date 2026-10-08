@@ -142,3 +142,52 @@ h1 {
 .btn-icone.excluir {
     color: #b00020;
 }
+
+.form-limpar {
+    margin-top: 16px;
+    text-align: right;
+}
+
+.form-limpar button {
+    background: none;
+    border: none;
+    color: #b00020;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: underline;
+}
+
+
+.form-novo {
+    flex-wrap: wrap;
+}
+
+.form-novo select {
+    flex-basis: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    background: #fff;
+}
+
+.link-nav {
+    display: inline-block;
+    margin-bottom: 16px;
+    color: #0c4b33;
+    font-size: 14px;
+}
+
+.tag {
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: #e6f4ea;
+    color: #0c4b33;
+    white-space: nowrap;
+}
+
+.lista .total {
+    font-size: 14px;
+    color: #777;
+}

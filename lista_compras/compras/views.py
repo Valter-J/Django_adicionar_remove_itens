@@ -1,10 +1,10 @@
 from django.contrib import messages
+from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from .forms import ItemForm
-from .models import Item
-
+from .forms import CategoriaForm, ItemForm
+from .models import Categoria, Item
 
 def lista(request):
     if request.method == "POST":
@@ -16,13 +16,14 @@ def lista(request):
     else:
         form = ItemForm()
 
-    itens = Item.objects.all()
+    itens = Item.objects.select_related("categoria")
     pendentes = itens.filter(comprado=False).count()
 
     return render(request, "compras/lista.html", {
         "form": form,
         "itens": itens,
         "pendentes": pendentes,
+        "tem_comprados": itens.filter(comprado=True).exists(),
     })
 
 
@@ -40,3 +41,37 @@ def excluir(request, pk):
     item.delete()
     messages.info(request, f"{item.nome} removido da lista.")
     return redirect("lista")
+
+
+@require_POST
+def limpar_comprados(request):
+    total, _ = Item.objects.filter(comprado=True).delete()
+    messages.info(request, f"{total} item(ns) comprado(s) removido(s).")
+    return redirect("lista")
+
+
+
+def categorias(request):
+    if request.method == "POST":
+        form = CategoriaForm(request.POST)
+        if form.is_valid():
+            categoria = form.save()
+            messages.success(request, f"Categoria {categoria.nome} criada.")
+            return redirect("categorias")
+    else:
+        form = CategoriaForm()
+
+    lista_categorias = Categoria.objects.annotate(total_itens=Count("itens"))
+
+    return render(request, "compras/categorias.html", {
+        "form": form,
+        "categorias": lista_categorias,
+    })
+
+
+@require_POST
+def excluir_categoria(request, pk):
+    categoria = get_object_or_404(Categoria, pk=pk)
+    categoria.delete()
+    messages.info(request, f"Categoria {categoria.nome} removida. Os itens dela ficaram sem categoria.")
+    return redirect("categorias")
